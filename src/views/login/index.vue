@@ -64,9 +64,10 @@ export default {
           const res = await login(this.loginForm)
           console.log(res)
           this.$store.commit('setToken', res.data.data.token) // 请求回来的token保存在vuex的state中的setUser里
+          this.$message.success('登录成功')
           this.$router.push('/home')
         } catch (error) {
-          console.log(error)
+          this.$message.error('账号密码错误')
         }
       } catch (error) {
         this.$message.error('登录表单验证失败')

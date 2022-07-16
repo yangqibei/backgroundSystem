@@ -7,13 +7,15 @@ const vuexLocal = new VuexPersistence({
 })
 export default new Vuex.Store({
   state: {
-    token: ''
+    user: {
+      token: ''
+    }
   },
   getters: {
   },
   mutations: {
     setToken (state, payload) {
-      state.token = payload
+      state.user.token = payload
     }
   },
   actions: {
