@@ -52,7 +52,7 @@
                         :key="item3.id"
                         closable
                         :disable-transitions="false"
-                        @close="handleClose(item3.id, props.row.id)"
+                        @close="handleClose(item3.id, props.row.id, props.row)"
                       >
                         {{ item3.authName }}
                       </el-tag>
@@ -227,7 +227,7 @@ export default {
       )
     },
     // 点击tag标签关闭
-    handleClose (rightId, roleId) {
+    handleClose (rightId, roleId, list) {
       this.$confirm('此操作将永久删除该标签, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -237,7 +237,8 @@ export default {
           roleId: roleId, rightId: rightId
         })
         console.log(res)
-        this.getName()
+        list.children = res.data.data
+        // this.getName()
         this.$message({
           type: 'success',
           message: '删除成功!'
