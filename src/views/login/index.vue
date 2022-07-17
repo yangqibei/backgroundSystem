@@ -53,9 +53,11 @@ export default {
     }
   },
   methods: {
+    // 重置表单
     reset () {
       this.$refs.loginFormRef.resetFields()
     },
+    // 登录接口
     async login () {
       try {
         await this.$refs.loginFormRef.validate()

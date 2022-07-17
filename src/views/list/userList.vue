@@ -1,8 +1,11 @@
 <template>
   <div>
+    <!-- 头部 -->
     <div class="header">
       <Breadcrumb list="用户列表" manage="用户管理"></Breadcrumb>
     </div>
+    <!-- 主体  -->
+    <!-- 搜索框  -->
     <div class="card">
       <el-row :gutter="20" type="flex">
         <el-col :span="8">
@@ -20,6 +23,7 @@
           >
         </el-col>
       </el-row>
+      <!-- 表格 -->
       <template>
         <el-table :data="tableData" border="">
           <el-table-column type="index" label="#" min-width="50px">
@@ -63,7 +67,8 @@
           </el-table-column>
         </el-table>
       </template>
-      <div>
+      <!-- 分页 -->
+      <template>
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -74,14 +79,15 @@
           :total="total"
         >
         </el-pagination>
-      </div>
-      <!-- 弹窗 -->
+      </template>
+      <!-- 添加用户弹窗 -->
       <el-dialog
         title="添加用户对话框"
         :visible.sync="addDialog"
         ref="addDialog"
+        @close="handleAddClose"
       >
-        <el-form :model="form" :rules="rules">
+        <el-form :model="form" :rules="rules" ref="AddForm">
           <el-form-item label="用户名" label-width="80px" prop="username">
             <el-input v-model="form.username"></el-input>
           </el-form-item>
@@ -100,6 +106,7 @@
           <el-button type="primary" @click="addUser">确 定</el-button>
         </div>
       </el-dialog>
+      <!-- 修改用户信息弹窗 -->
       <el-dialog title="修改用户信息" :visible.sync="changeUser">
         <el-form :model="userdetial" :rules="rules" ref="userdetial">
           <el-form-item label="用户名" label-width="80px">
@@ -117,7 +124,12 @@
           <el-button type="primary" @click="changeUserDetial">确 定</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="分配角色" :visible.sync="nameList">
+      <!-- 分配角色弹窗 -->
+      <el-dialog
+        title="分配角色"
+        :visible.sync="nameList"
+        @close="handleSelectClose"
+      >
         <p>当前的用户:{{ userInfo.username }}</p>
         <p>当前的管理员:{{ userInfo.role_name }}</p>
         <p>
@@ -145,6 +157,7 @@ import { getUser, addUser, changeState, getUserDetial, changeUserDetial, delUser
 export default {
   name: 'userList',
   created () { this.getUser() },
+  // 表单正则校验
   data () {
     const validateMobileFn = (rule, value, callback) => {
       if (validateMobile(value)) {
@@ -213,6 +226,7 @@ export default {
     }
   },
   methods: {
+    // 获取用户数据列表
     async getUser () {
       try {
         const res = await getUser(this.user)
@@ -223,6 +237,7 @@ export default {
         console.log(error)
       }
     },
+    // 添加用户
     async addUser () {
       try {
         await this.$refs.addDialog.validate()
@@ -239,6 +254,7 @@ export default {
         this.$message.error('表单验证失败')
       }
     },
+    // 切换用户状态
     async fn (id, type) {
       try {
         const res = await changeState({
@@ -253,20 +269,24 @@ export default {
         type: 'success'
       })
     },
+    // 切换分页每页页数
     handleSizeChange (val) {
       this.user.pagesize = val
       this.getUser()
     },
+    // 切换分页页数
     handleCurrentChange (val) {
       this.user.pagenum = val
       this.getUser()
     },
+    // 获取用户的详细信息
     async userDetial (id) {
       const res = await getUserDetial(id)
       // console.log(res)
       this.userdetial = res.data.data
       this.changeUser = true
     },
+    // 修改用户的详细信息
     async changeUserDetial () {
       try {
         await this.$refs.userdetial.validate()
@@ -282,6 +302,7 @@ export default {
         this.$message.error('表单验证失败')
       }
     },
+    // 删除用户
     async delopen (id) {
       const res = await delUser(id)
       console.log(res)
@@ -302,6 +323,7 @@ export default {
         })
       })
     },
+    // 获得角色列表
     async getName (user) {
       console.log(user)
       const res = await getName()
@@ -310,6 +332,7 @@ export default {
       this.namelist = res.data.data
       this.userInfo = user
     },
+    // 更改角色
     async changeName () {
       if (!this.selectedid) {
         this.$message.error('请分配新角色')
@@ -326,6 +349,14 @@ export default {
       } else {
         this.$message.error('分配角色失败')
       }
+    },
+    // 重置添加用户的表单信息
+    handleAddClose () {
+      this.$refs.AddForm.resetFields()
+    },
+    // 重置修改角色的选框信息
+    handleSelectClose () {
+      this.selectedid = ''
     }
   },
   computed: {},

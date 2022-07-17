@@ -1,8 +1,11 @@
 <template>
   <div>
+    <!-- 头部 -->
     <div class="header">
       <Breadcrumb list="角色列表" manage="权限管理"></Breadcrumb>
     </div>
+    <!-- 主体 -->
+    <!-- 搜索框 -->
     <div class="main">
       <el-row :gutter="20" type="flex">
         <el-col :span="8">
@@ -20,8 +23,10 @@
           >
         </el-col>
       </el-row>
+      <!-- 表单 -->
       <template>
         <el-table :data="tableData" border="">
+          <!-- 下拉权限表单 -->
           <el-table-column type="expand" default-expand-all="true">
             <template slot-scope="props">
               <el-row
@@ -62,6 +67,7 @@
               </el-row>
             </template>
           </el-table-column>
+          <!-- 角色数据表单 -->
           <el-table-column type="index" label="#" min-width="50px">
           </el-table-column>
           <el-table-column prop="roleName" label="角色名称" min-width="120px">
@@ -95,7 +101,7 @@
           </el-table-column>
         </el-table>
       </template>
-      <!-- 弹出层 -->
+      <!-- 添加角色弹出层 -->
       <el-dialog :visible.sync="centerDialogVisible" width="50%" center>
         <h4>分配权限</h4>
         <el-tree
@@ -115,8 +121,12 @@
           <el-button type="primary" @click="changeName">确 定</el-button>
         </span>
       </el-dialog>
-      <el-dialog title="添加用户对话框" :visible.sync="addDialog">
-        <el-form :model="form" :rules="rules">
+      <el-dialog
+        title="添加用户对话框"
+        :visible.sync="addDialog"
+        @close="handleAddClose"
+      >
+        <el-form :model="form" :rules="rules" ref="AddForm">
           <el-form-item label="角色名称" label-width="80px" prop="roleName">
             <el-input v-model="form.roleName"></el-input>
           </el-form-item>
@@ -129,6 +139,7 @@
           <el-button type="primary" @click="AddNames">确 定</el-button>
         </div>
       </el-dialog>
+      <!-- 修改用户弹出层 -->
       <el-dialog
         title="修改用户对话框"
         :visible.sync="emitDialog"
@@ -200,6 +211,7 @@ export default {
     }
   },
   methods: {
+    // 获得角色列表
     async getName () {
       try {
         const res = await getName()
@@ -209,6 +221,7 @@ export default {
         console.log(error)
       }
     },
+    // 获得树型角色列表
     async getTree (obj) {
       this.roleId = obj.id
       const res = await getTree()
@@ -218,7 +231,7 @@ export default {
       this.getKeys(obj, this.defkeys)
       this.centerDialogVisible = true
     },
-    // 利用递归得到三级权限
+    // 利用递归得到所有的三级权限
     getKeys (obj, arr) {
       if (!obj.children) {
         return arr.push(obj.id)
@@ -226,7 +239,7 @@ export default {
       obj.children.forEach(item => this.getKeys(item, arr)
       )
     },
-    // 点击tag标签关闭
+    // 点击下拉权限表单的tag标签关闭
     handleClose (rightId, roleId, list) {
       this.$confirm('此操作将永久删除该标签, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -250,6 +263,7 @@ export default {
         })
       })
     },
+    // 更改角色
     async changeName () {
       this.centerDialogVisible = true
       const res1 = this.$refs.tree.getCheckedKeys()
@@ -269,6 +283,7 @@ export default {
         console.log(error)
       }
     },
+    // 添加角色
     async AddNames () {
       await addNames(this.form)
       this.$message.success('添加成功')
@@ -276,6 +291,7 @@ export default {
       this.form = {}
       this.getName()
     },
+    // 删除角色
     delnames (id) {
       console.log(id)
       this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
@@ -296,6 +312,7 @@ export default {
         })
       })
     },
+    // 修改角色
     emitname (obj) {
       this.emitDialog = true
       console.log(obj)
@@ -319,6 +336,7 @@ export default {
         this.$message.error('表单验证失败')
       }
     },
+    // 利用角色id获得角色
     async findNameById () {
       const res = await findNameById(this.findId)
       console.log(res)
@@ -326,6 +344,10 @@ export default {
       // this.tableData = res.data.data
       this.tableData.push(res.data.data)
       this.findId = ''
+    },
+    // 重置添加角色表单数据
+    handleAddClose () {
+      this.$refs.AddForm.resetFields()
     }
   },
   computed: {},

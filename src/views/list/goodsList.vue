@@ -1,8 +1,11 @@
 <template>
   <div>
+    <!-- 头部 -->
     <div class="header">
       <Breadcrumb list="商品列表" manage="商品管理"></Breadcrumb>
     </div>
+    <!-- 主体 -->
+    <!-- 搜索框 -->
     <div class="main">
       <template>
         <el-row :gutter="20" type="flex">
@@ -16,6 +19,7 @@
           </el-col>
         </el-row>
       </template>
+      <!-- 商品表格数据 -->
       <template>
         <el-table :data="tableData" border="">
           <el-table-column type="index" label="#" min-width="50px">
@@ -56,6 +60,7 @@
             </template>
           </el-table-column>
         </el-table>
+        <!-- 分页 -->
         <template>
           <el-pagination
             @size-change="handleSizeChange"
@@ -89,16 +94,19 @@ export default {
     }
   },
   methods: {
+    // 获得商品列表
     async getGoodList () {
       const res = await getGoodList(this.goods)
       console.log(res)
       this.total = res.data.data.total
       this.tableData = res.data.data.goods
     },
+    // 根据条数刷新数据
     handleSizeChange (val) {
       this.goods.pagesize = val
       this.getGoodList()
     },
+    // 根据页码刷新数据
     handleCurrentChange (val) {
       this.goods.pagenum = val
       this.getGoodList()
