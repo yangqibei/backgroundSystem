@@ -10,12 +10,20 @@
       <template>
         <el-row :gutter="20" type="flex">
           <el-col :span="8">
-            <el-input placeholder="请输入内容">
-              <el-button slot="append" icon="el-icon-search"></el-button>
+            <el-input placeholder="请输入内容" v-model="findId">
+              <el-button
+                slot="append"
+                icon="el-icon-search"
+                @click="getGoodsById"
+              ></el-button>
             </el-input>
           </el-col>
           <el-col :span="4">
-            <el-button type="primary">添加商品</el-button>
+            <el-button
+              type="primary"
+              @click="$router.push('/home/add')"
+              >添加商品</el-button
+            >
           </el-col>
         </el-row>
       </template>
@@ -49,13 +57,13 @@
                 type="primary"
                 icon="el-icon-edit"
                 size="mini"
-                @click="userDetial(scope.row.id)"
+                @click="editgoods(scope.row)"
               ></el-button>
               <el-button
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
-                @click="delopen(scope.row.id)"
+                @click="delopen(scope.row.goods_id)"
               ></el-button>
             </template>
           </el-table-column>
@@ -73,13 +81,41 @@
           >
           </el-pagination>
         </template>
+        <!-- 修改商品弹出框 -->
+        <el-dialog
+          title="修改用户对话框"
+          :visible.sync="emitDialog"
+          ref="editform"
+        >
+          <el-form :model="goodList" :rules="rules">
+            <el-form-item label="商品id" label-width="80px" prop="id">
+              <el-input v-model="goodList.id" disabled> </el-input>
+            </el-form-item>
+            <el-form-item label="商品名称" label-width="80px" prop="goods_name">
+              <el-input v-model="goodList.goods_name"></el-input>
+            </el-form-item>
+            <el-form-item label="价格" label-width="80px" prop="goods_price">
+              <el-input v-model="goodList.goods_price"></el-input>
+            </el-form-item>
+            <el-form-item label="数量" label-width="80px" prop="goods_number">
+              <el-input v-model="goodList.goods_number"></el-input>
+            </el-form-item>
+            <el-form-item label="重量" label-width="80px" prop="goods_weight">
+              <el-input v-model="goodList.goods_weight"></el-input>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="emitDialog = false">取 消</el-button>
+            <el-button type="primary" @click="editchange">确 定</el-button>
+          </div>
+        </el-dialog>
       </template>
     </div>
   </div>
 </template>
 
 <script>
-import { getGoodList } from '@/api/goods'
+import { getGoodList, editGoods, DelGoods, getGoodsById } from '@/api/goods'
 export default {
   created () { this.getGoodList() },
   data () {
@@ -90,7 +126,27 @@ export default {
         pagenum: 1,
         pagesize: 5
       },
-      total: 0
+      total: 0,
+      goodList: {},
+      emitDialog: false,
+      rules: {
+        goods_name: [
+          { required: true, message: '商品名不能为空', trigger: 'blur' },
+          {
+            min: 3, max: 8, message: '商品名长度在3到8之间', trigger: 'blur'
+          }
+        ],
+        goods_price: [
+          { required: true, message: '商品价格不能为空', trigger: 'blur' }
+        ],
+        goods_number: [
+          { required: true, message: '商品数量不能为空', trigger: 'blur' }
+        ],
+        goods_weight: [
+          { required: true, message: '商品重量不能为空', trigger: 'blur' }
+        ]
+      },
+      findId: ''
     }
   },
   methods: {
@@ -110,6 +166,56 @@ export default {
     handleCurrentChange (val) {
       this.goods.pagenum = val
       this.getGoodList()
+    },
+    // 修改商品
+    editgoods (obj) {
+      this.emitDialog = true
+      console.log(obj)
+      // this.goodList.id = obj.goods_id
+      // this.goodList.goods_name = obj.goods_name
+      // this.goodList.goods_price = obj.goods_price
+      // this.goodList.goods_number = obj.goods_number
+      // this.goodList.goods_weight = obj.goods_weight
+      this.goodList = { ...obj }
+      this.goodList.id = obj.goods_id
+    },
+    async editchange () {
+      const res = await editGoods(this.goodList)
+      if (res.data.meta.status === 201) {
+        this.$message.success(res.data.meta.msg)
+        this.emitDialog = false
+      } else {
+        this.$message.error(res.data.meta.msg)
+      }
+    },
+    delopen (id) {
+      console.log(id)
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        await DelGoods(id)
+        this.getGoodList()
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    // 利用角色id获得角色
+    async getGoodsById () {
+      const res = await getGoodsById({ id: this.findId })
+      console.log(res)
+      this.tableData = []
+      // this.tableData = res.data.data
+      this.tableData.push(res.data.data)
+      this.findId = ''
     }
   },
   computed: {},

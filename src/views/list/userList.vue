@@ -295,6 +295,8 @@ export default {
           this.changeUser = false
           const res = await changeUserDetial(this.userdetial)
           console.log(res)
+          this.getUser()
+          this.$message.success('用户信息更新成功')
         } catch (error) {
           console.log(error)
         }

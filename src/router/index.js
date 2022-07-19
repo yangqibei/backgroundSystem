@@ -38,10 +38,12 @@ const routes = [
       },
       {
         path: '/home/orderList', name: 'orderList', component: () => import('@/views/list/orderList.vue')
-      }
+      },
+      { path: '/home/add', name: 'addgoodslist', component: () => import('@/views/list/addgoodslist.vue') }
     ]
   },
   { path: '/dataReport', name: 'dataReport', component: () => import('@/views/list/dataReport.vue') }
+
 ]
 
 const router = new VueRouter({

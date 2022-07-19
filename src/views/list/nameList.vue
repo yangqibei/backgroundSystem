@@ -39,7 +39,7 @@
                   ><el-tag>{{ item1.authName }}</el-tag>
                   <i class="el-icon-caret-right"></i>
                 </el-col>
-                <!-- 渲染二三级路由 -->
+                <!-- 渲染二级路由 -->
                 <el-col :span="19">
                   <el-row
                     v-for="item2 in item1.children"
@@ -87,21 +87,28 @@
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
-                @click="delnames(scope.row.id)"
+                @click="
+                  delnames(scope.row.id ? scope.row.id : scope.row.roleId)
+                "
                 >删除</el-button
               >
               <el-button
                 type="warning"
                 icon="el-icon-setting"
                 size="mini"
-                @click="getTree(scope.row)"
+                @click="
+                  getTree(
+                    scope.row,
+                    scope.row.id ? scope.row.id : scope.row.roleId
+                  )
+                "
                 >分配权限</el-button
               >
             </template>
           </el-table-column>
         </el-table>
       </template>
-      <!-- 添加角色弹出层 -->
+      <!-- tree分配权限弹出层 -->
       <el-dialog :visible.sync="centerDialogVisible" width="50%" center>
         <h4>分配权限</h4>
         <el-tree
@@ -115,12 +122,12 @@
           :props="defaultProps"
         >
         </el-tree>
-
         <span slot="footer" class="dialog-footer">
           <el-button @click="centerDialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="changeName">确 定</el-button>
         </span>
       </el-dialog>
+      <!-- 添加角色弹出层 -->
       <el-dialog
         title="添加用户对话框"
         :visible.sync="addDialog"
@@ -140,12 +147,8 @@
         </div>
       </el-dialog>
       <!-- 修改用户弹出层 -->
-      <el-dialog
-        title="修改用户对话框"
-        :visible.sync="emitDialog"
-        ref="editform"
-      >
-        <el-form :model="emitform" :rules="rules">
+      <el-dialog title="修改用户对话框" :visible.sync="emitDialog">
+        <el-form :model="emitform" :rules="rules" ref="editform">
           <el-form-item label="用户id" label-width="80px" prop="id">
             <el-input v-model="emitform.id" disabled> </el-input>
           </el-form-item>
@@ -222,13 +225,13 @@ export default {
       }
     },
     // 获得树型角色列表
-    async getTree (obj) {
-      this.roleId = obj.id
+    async getTree (obj, id) {
+      this.roleId = id
       const res = await getTree()
       console.log(res)
       this.treedata = res.data.data
       this.defkeys = []
-      this.getKeys(obj, this.defkeys)
+      this.getKeys(obj.children ? obj : res.data.data, this.defkeys)
       this.centerDialogVisible = true
     },
     // 利用递归得到所有的三级权限
@@ -316,7 +319,7 @@ export default {
     emitname (obj) {
       this.emitDialog = true
       console.log(obj)
-      this.emitform.id = obj.id
+      this.emitform.id = obj.id ? obj.id : obj.roleId
       this.emitform.roleName = obj.roleName
       this.emitform.roleDesc = obj.roleDesc
     },
