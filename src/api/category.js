@@ -12,6 +12,28 @@ export const addcategory = (data) => {
     data
   })
 }
+/**
+ *添加动态参数或者静态属性
+ * @param {分类id,参数名称,only,many,} param0
+ * @returns
+ */
+export const addcategories = ({ id, attr_name, attr_sel, attr_vals }) => {
+  return request({
+    method: 'POST',
+    url: `categories/${id}/attributes`,
+    data: { id, attr_name, attr_sel, attr_vals }
+  })
+}
+/**
+ *上传图片
+ * @returns
+ */
+export const uploadImg = () => {
+  return request({
+    method: 'POST',
+    url: 'upload'
+  })
+}
 //! 删
 /**
  *根据商品id删除分类
@@ -27,7 +49,35 @@ export const delcategoriesById = (id) => {
     }
   })
 }
+/**
+ *删除参数
+ * @param {分类id 参数id} param0
+ * @returns
+ */
+export const delcategories = ({ id, attrid }) => {
+  return request({
+    method: 'DELETE',
+    url: `categories/${id}/attributes/${attrid}`,
+    data: {
+      id, attrid
+    }
+  })
+}
 //! 改
+/**
+ *删除参数
+ * @param {分类id 参数id} param0
+ * @returns
+ */
+export const editcategories = ({ id, attrId, attr_name, attr_sel, attr_vals }) => {
+  return request({
+    method: 'PUT',
+    url: `categories/${id}/attributes/${attrId}`,
+    data: {
+      id, attrId, attr_name, attr_sel, attr_vals
+    }
+  })
+}
 //! 查
 /**
  * 获得商品分类数据列表

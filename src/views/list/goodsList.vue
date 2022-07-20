@@ -10,7 +10,12 @@
       <template>
         <el-row :gutter="20" type="flex">
           <el-col :span="8">
-            <el-input placeholder="请输入内容" v-model="findId">
+            <el-input
+              placeholder="请输入内容"
+              v-model="findId"
+              clearable
+              @clear="getGoodList()"
+            >
               <el-button
                 slot="append"
                 icon="el-icon-search"
@@ -19,9 +24,7 @@
             </el-input>
           </el-col>
           <el-col :span="4">
-            <el-button
-              type="primary"
-              @click="$router.push('/home/add')"
+            <el-button type="primary" @click="$router.push('/home/add')"
               >添加商品</el-button
             >
           </el-col>
