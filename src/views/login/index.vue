@@ -2,7 +2,7 @@
   <div class="login-container">
     <div class="form-box">
       <div class="avatar">
-        <img src="@/assets/logo.png" alt="" />
+        <img src="@/assets/logo.jpeg" alt="" />
       </div>
       <el-form :model="loginForm" :rules="rules" ref="loginFormRef">
         <el-form-item prop="username">
@@ -85,7 +85,9 @@ export default {
 
 <style scoped lang='less'>
 .login-container {
-  background-color: #2b4b6b;
+  background-image: url("@/assets/bg.jpeg");
+  background-position: center;
+  background-size: cover;
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -103,20 +105,19 @@ export default {
     .avatar {
       position: absolute;
       top: 22%;
-      right: 47%;
+      right: 45%;
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
       background-color: #fff;
       border-radius: 50%;
-      box-shadow: 0 0 10px green;
       z-index: 2;
     }
     img {
-      width: 80px;
-      height: 80px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
     }
   }

@@ -10,6 +10,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 // 注册面包屑组件
 import Breadcrumb from '@/views/list/components/Breadcrumb.vue'
 import * as obj from '@/filters'
+import TreeTable from 'vue-table-with-tree-grid'
+Vue.component('tree-table', TreeTable)
 Vue.use(ElementUI)
 Vue.component('Breadcrumb', Breadcrumb)
 Vue.config.productionTip = false

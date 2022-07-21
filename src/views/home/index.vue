@@ -3,8 +3,8 @@
     <!-- 头部 -->
     <el-header>
       <div class="left">
-        <img src="@/assets/logo.png" alt="" />
-        <span>小趴菜后台管理系统</span>
+        <img src="@/assets/logo.jpeg" alt="" />
+        <span>加多宝后台管理系统</span>
       </div>
       <el-button type="text" @click="open" class="head-btn">退出</el-button>
     </el-header>
@@ -138,7 +138,7 @@ export default {
     display: flex;
     justify-content: space-between;
     line-height: 60px;
-    background-color: lightblue;
+    background-color: crimson;
     img {
       width: 61px;
       height: 60px;
@@ -175,7 +175,7 @@ export default {
       cursor: pointer;
       color: #fff;
     }
-    background-color: #373d41;
+    background: url("@/assets/side.jpeg");
   }
   .el-main {
     background-color: #eaedf1;

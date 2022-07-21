@@ -65,7 +65,7 @@ export const delcategories = ({ id, attrid }) => {
 }
 //! 改
 /**
- *删除参数
+ *更改参数
  * @param {分类id 参数id} param0
  * @returns
  */
@@ -75,6 +75,20 @@ export const editcategories = ({ id, attrId, attr_name, attr_sel, attr_vals }) =
     url: `categories/${id}/attributes/${attrId}`,
     data: {
       id, attrId, attr_name, attr_sel, attr_vals
+    }
+  })
+}
+/**
+ *商品分类管理 编辑提交分类
+ * @param {*} param0
+ * @returns
+ */
+export const editGoodsCate = ({ id, cat_name }) => {
+  return request({
+    method: 'PUT',
+    url: `categories/${id}`,
+    data: {
+      id, cat_name
     }
   })
 }

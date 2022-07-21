@@ -20,7 +20,52 @@
       </el-row>
       <!-- 表格 -->
       <template>
-        <el-table :data="tableData" border="">
+        <tree-table
+          :data="tableData"
+          :columns="columns"
+          :selection-type="false"
+          :expand-type="false"
+          :show-index="true"
+          :border="true"
+        >
+          <!-- 是否有效 -->
+          <template slot="isok" slot-scope="scope">
+            <i
+              v-if="scope.row.cat_deleted === false"
+              class="el-icon-success"
+              style="color: green"
+            ></i>
+            <i class="el-icon-error" v-else style="color: red"></i>
+          </template>
+          <!-- 排序 -->
+          <template slot="order" slot-scope="scope">
+            <el-tag v-if="scope.row.cat_level === 0">等级一</el-tag>
+            <el-tag v-else-if="scope.row.cat_level === 1" type="success"
+              >等级二</el-tag
+            >
+            <el-tag v-else-if="scope.row.cat_level === 2" type="warning"
+              >等级三</el-tag
+            >
+          </template>
+          <!-- 操作 -->
+          <template slot="opt" slot-scope="scope">
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              size="mini"
+              @click="fn(scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="delcategoriesById(scope.row.cat_id)"
+              >删除</el-button
+            >
+          </template>
+        </tree-table>
+        <!-- <el-table :data="tableData" border="">
           <el-table-column type="index" label="#" min-width="50px">
           </el-table-column>
           <el-table-column prop="cat_name" label="分类名称" min-width="80px">
@@ -59,7 +104,7 @@
               >
             </template>
           </el-table-column>
-        </el-table>
+        </el-table> -->
       </template>
       <!-- 分页 -->
       <template>
@@ -100,12 +145,24 @@
           <el-button type="primary" @click="addCate">确 定</el-button>
         </div>
       </el-dialog>
+      <!-- 添加参数 -->
+      <el-dialog title="收货地址" :visible.sync="editdialog">
+        <el-form :model="editform" :rules="rules" ref="Addform">
+          <el-form-item label="参数名称" label-width="80px" prop="cat_name">
+            <el-input v-model="editform.cat_name"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="editdialog = false">取 消</el-button>
+          <el-button type="primary" @click="edit">确 定</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import { getcategoriesList, getcategoriesById, delcategoriesById, addcategory } from '@/api/category'
+import { getcategoriesList, getcategoriesById, delcategoriesById, addcategory, editGoodsCate } from '@/api/category'
 export default {
   created () { this.getcategoriesList() },
   data () {
@@ -142,7 +199,36 @@ export default {
         expandTrigger: 'hover',
         leaf: 'cat_level',
         checkStrictly: true// 父子结点互不关联
-      }
+      },
+      columns: [{
+        label: '分类名称',
+        prop: 'cat_name'
+      },
+      {
+        label: '是否有效',
+        prop: 'cat_deleted',
+        // 表示将当前列定义为模板列
+        type: 'template',
+        // 表示当前这一列使用模板名称
+        template: 'isok'
+      },
+      {
+        label: '排序',
+        // 表示将当前列定义为模板列
+        type: 'template',
+        // 表示当前这一列使用模板名称
+        template: 'order'
+      },
+      {
+        label: '操作',
+        type: 'template',
+        template: 'opt'
+      }],
+      editform: {
+        id: '',
+        cat_name: ''
+      },
+      editdialog: false
     }
   },
   methods: {
@@ -165,8 +251,17 @@ export default {
       this.pagenum = res.data.data.pagenum
       this.pagesize = res.data.data.pagesize
     },
+    // 编辑更改
     fn (obj) {
       console.log(obj)
+      this.editdialog = true
+      this.editform.id = obj.cat_id
+      this.editform.cat_name = obj.cat_name
+    },
+    async edit () {
+      await editGoodsCate(this.editform)
+      this.editdialog = false
+      this.getcategoriesList()
     },
     // 利用角色id获得角色
     async getcategoriesById () {
@@ -247,11 +342,5 @@ export default {
   .el-table {
     margin-top: 20px;
   }
-}
-:deep(.el-icon-success) {
-  color: rgb(31, 105, 63);
-}
-:deep(.el-icon-error) {
-  color: rgb(204, 57, 57);
 }
 </style>
