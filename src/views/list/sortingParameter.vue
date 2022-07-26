@@ -205,6 +205,7 @@ export default {
     async getTableData () {
       if (this.selectedKeys.length !== 3) {
         this.selectedKeys = []
+        this.$message.error('请选择3级分类')
       }
       console.log(this.selectedKeys)
       const res = await getCateAttributes({

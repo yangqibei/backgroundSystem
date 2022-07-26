@@ -27,6 +27,7 @@
           :expand-type="false"
           :show-index="true"
           :border="true"
+          class="table"
         >
           <!-- 是否有效 -->
           <template slot="isok" slot-scope="scope">
@@ -127,7 +128,12 @@
         @close="handleAddClose"
       >
         <el-form :model="addForm" :rules="rules" ref="AddFormRef">
-          <el-form-item label="分类名称" label-width="80px" prop="cat_name">
+          <el-form-item
+            label="分类名称"
+            label-width="80px"
+            prop="cat_name"
+            style="width: 50%"
+          >
             <el-input v-model="addForm.cat_name"></el-input>
           </el-form-item>
           <el-form-item label="父级分类" label-width="80px">
@@ -146,9 +152,14 @@
         </div>
       </el-dialog>
       <!-- 添加参数 -->
-      <el-dialog title="收货地址" :visible.sync="editdialog">
+      <el-dialog title="修改参数" :visible.sync="editdialog">
         <el-form :model="editform" :rules="rules" ref="Addform">
-          <el-form-item label="参数名称" label-width="80px" prop="cat_name">
+          <el-form-item
+            label="参数名称"
+            label-width="80px"
+            prop="cat_name"
+            style="width: 50%"
+          >
             <el-input v-model="editform.cat_name"></el-input>
           </el-form-item>
         </el-form>
@@ -339,7 +350,7 @@ export default {
   margin-top: 20px;
   padding: 20px;
   background-color: #fff;
-  .el-table {
+  .table {
     margin-top: 20px;
   }
 }
